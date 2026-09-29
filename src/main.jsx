@@ -4,6 +4,7 @@ import { BrowserRouter, NavLink, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
 import Catalog from './Catalog.jsx'
 import './index.css'
+import logo from './assets/logo.png'
 
 function Profile() {
   return <h1>Profile</h1>
@@ -12,8 +13,9 @@ function Profile() {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <header>
-      <NavLink to="/" className="logo">Skat</NavLink>
-
+       <NavLink to="/" className="logo">
+        <img src={logo} alt="Skat" />
+      </NavLink>
       <nav className="nav">
         <NavLink to="/catalog">Каталог</NavLink>
         <NavLink to="/profile">Профиль</NavLink>

@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 const products = [
   { id: 1, name: 'Audio-Technica AT2020', img: 'https://n.cdn.cdek.shopping/images/shopping/F4G4A5bBKzYlrqf8.jpg?v=1', price: 10999 },
   { id: 2, name: 'Neumann TLM 103', img: 'https://avatars.mds.yandex.net/i?id=246f327322dbf1a1393cf43c6a1066f3_l-3696566-images-thumbs&n=13&n=13&w=345&h=230', price: 110999 },
@@ -14,20 +16,66 @@ const products = [
   
 ]
 
+const priceRanges = [
+  {id:'all', label:'Все цены', min: 0, max: Infinity},
+   { id: 'low',    label: 'до 15 000 ₽',  min: 0,     max: 15000 },
+  { id: 'mid',    label: '15 000 – 30 000 ₽', min: 15000, max: 30000 },
+  { id: 'high',   label: '30 000 – 60 000 ₽', min: 30000, max: 60000 },
+  { id: 'top',    label: 'от 60 000 ₽',  min: 60000, max: Infinity },
+]
+
 export default function Catalog() {
+  const [search, setSearch] = useState('')
+  const [rangeId, setRangeId] = useState('all')
+
+  const range = priceRanges.find(r => r.id === rangeId)
+
+  const filtered = products.filter(p => {
+    const matchName = p.name.toLowerCase().includes(search.toLowerCase())
+    const matchPrice = p.price >= range.min && p.price <= range.max
+    return matchName && matchPrice
+  })
+
   return (
     <div className="container">
-      <h1>Каталог всех товаров</h1>
+      <h1>Каталог</h1>
 
-      <div className="grid">
-        {products.map(p => (
-          <div key={p.id} className="card">
-            <img src={p.img} alt={p.name} />
-            <h3>{p.name}</h3>
-            <p className="price">{p.price.toLocaleString()} ₽</p>
-          </div>
+      {/* Поиск */}
+      <input
+        type="text"
+        className="search"
+        placeholder="Поиск по названию..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+      />
+
+      {/* Фильтр по цене */}
+      <div className="price-tabs">
+        {priceRanges.map(r => (
+          <button
+            key={r.id}
+            className={r.id === rangeId ? 'price-tab active' : 'price-tab'}
+            onClick={() => setRangeId(r.id)}
+          >
+            {r.label}
+          </button>
         ))}
       </div>
+
+      {/* Товары */}
+      {filtered.length === 0 ? (
+        <p className="empty">Ничего не найдено 😔</p>
+      ) : (
+        <div className="grid">
+          {filtered.map(p => (
+            <div key={p.id} className="card">
+              <img src={p.img} alt={p.name} />
+              <h3>{p.name}</h3>
+              <p className="price">{p.price.toLocaleString()} ₽</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
